@@ -94,14 +94,14 @@ def create_experiment(
 
 
 @cli.command("analyze")
-@click.option(
-    "--experiment-folder",
+@click.argument(
+    "folder",
     type=click.Path(dir_okay=True, path_type=Path),
-    help="Path to experiment folder.",
+    nargs=1,
 )
-def analyze_experiment(experiment_folder, *args, **kwargs) -> None:
+def analyze_experiment(folder, *args, **kwargs) -> None:
 
-    args_ = ["tree", str(experiment_folder)]
+    args_ = ["tree", str(folder)]
     pid = sp.run(args_, capture_output=True)
     pprint(pid.stdout.decode("utf-8"))
 
