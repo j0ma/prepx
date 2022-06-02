@@ -126,7 +126,7 @@ class ExperimentFolder:
     experiment_name: str
 
     # Root folder, e.g. "experiments" with all experiment folders inside it.
-    root_folder: str = field(repr=False)
+    root_folder: Optional[str] = field(default=None, repr=False)
 
     # Name for train/eval folders
     train_root_folder_name: str = field(repr=False, default="train")
