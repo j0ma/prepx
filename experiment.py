@@ -56,7 +56,7 @@ class TrainFolder:
             self.checkpoint_link.symlink_to(self.checkpoint_folder)
         else:
             print("Creating non-existent checkpoint folder:\n{self.checkpoint_link}")
-            self.checkpoint_link.mkdir(parents=True, exist_ok=False)
+            self.checkpoint_link.mkdir(parents=True, exist_ok=True)
 
         # Evaluation
         default_eval_name = self.default_eval_template.format(self.name)
@@ -159,7 +159,7 @@ class ExperimentFolder:
         return [f.name for f in self.train_root_folder.glob("*")]
 
     def create_root(self, return_path: bool = False) -> Optional[Path]:
-        self.full_path.mkdir(parents=True, exist_ok=False)
+        self.full_path.mkdir(parents=True, exist_ok=True)
 
         if return_path:
             return self.full_path
