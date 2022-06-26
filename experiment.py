@@ -55,7 +55,7 @@ class TrainFolder:
             print(f"Linking: {self.checkpoint_link} -> {self.checkpoint_folder}")
             self.checkpoint_link.symlink_to(self.checkpoint_folder)
         else:
-            print("Creating non-existent checkpoint folder:\n{self.checkpoint_link}")
+            print(f"Creating non-existent checkpoint folder:\n{self.checkpoint_link}")
             self.checkpoint_link.mkdir(parents=True, exist_ok=True)
 
         # Evaluation
