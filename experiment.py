@@ -209,7 +209,7 @@ class ExperimentFolder:
             path=root,
             checkpoint=checkpoint,
             raw_data_folder=raw_data_folder,
-            train_folder=train_folder,
+            train_folder=None
         )
 
         eval_folder.create()
