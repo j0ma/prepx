@@ -5,11 +5,10 @@ import subprocess as sp
 
 import click
 from rich import print as pprint
-import experiment as exp
+import prepx.experiment as exp
 
 TMP = Path("/tmp")
 STAGING = TMP / "staging"
-
 
 def create_random_checkpoint_folder() -> None:
     raise NotImplementedError
