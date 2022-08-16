@@ -24,7 +24,7 @@ class TrainFolder:
     default_raw_data_template = field(default="raw_data", repr=False)
     default_checkpoint_folder_template = field(default="checkpoints", repr=False)
     default_checkpoint_template = field(default="checkpoint_best.pt", repr=False)
-    default_eval_template = field(default="eval_{}", repr=False)
+    default_eval_template = field(default="eval", repr=False)
 
     raw_data_link: Optional[Path] = field(default=None)
     checkpoint_link: Optional[Path] = field(default=None)
