@@ -26,12 +26,6 @@ Commands:
 
 This command supports several scenarios:
 
-1. Create an experiment folder
-2. Create a train run under an experiment
-3. Only create an eval run under an experiment
-
-Different options are required depending on scenario.
-
 #### 1. Create an empty experiment folder
 
 ```
