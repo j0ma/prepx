@@ -1,6 +1,21 @@
 # prepx
 
-It prepares experiments. :)
+A library to create experiment folders according to a common schema.
+
+## Schema
+- An  *experiment* is a collection of *train* and *eval* runs
+- Each train run represents a trained model and has attributes:
+    - Checkpoint folder
+    - Eval folder
+    - Data folder
+    - Log folder
+- Each eval run represents a model applied to some data:
+    - Notably, this includes ones with no associated training runs
+    - Covers e.g. applying a pre-trained model on a given dataset
+    - Checkpoint folder
+    - Eval folder
+    - Data folder
+    - Log folder
 
 ## Installation
 ```bash
