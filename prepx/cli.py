@@ -76,11 +76,15 @@ def create_experiment(
 
     if not empty_only:
         create = ef.create_eval if eval_only else ef.create_train
+        checkpoint_key = "checkpoint" if eval_only else "checkpoint_folder"
+        checkpoint_value = eval_checkpoint if eval_only else checkpoints_folder
+
         args = {
-            "checkpoint": eval_checkpoint if eval_only else checkpoints_folder,
+            checkpoint_key: checkpoint_value,
             "name": eval_name if eval_only else train_name,
             "raw_data_folder": raw_data_folder,
         }
+
         create(**args)
 
     print(f"Path to created experiment: {str(root)}")
