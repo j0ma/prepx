@@ -22,15 +22,53 @@ Commands:
   create
 ```
 
-### Analyze
-```
-Usage: prepx analyze [OPTIONS] FOLDER
-
-Options:
-  --help  Show this message and exit.
-```
-
 ### Create
+
+This command supports several scenarios:
+
+1. Create an experiment folder
+2. Create a train run under an experiment
+3. Only create an eval run under an experiment
+
+Different options are required depending on scenario.
+
+#### 1. Create an empty experiment folder
+
+```
+prepx create --empty-only \
+             --experiment-name <desired-experiment-name> \
+             --root-folder <your-desired-root-name>
+             --experime
+```
+
+Doing this manually is not mandatory.
+
+#### 2. Create a train run under an experiment
+
+- Note: a default eval run will also be created under `eval_<train-name>`
+
+```
+prepx create \
+    --experiment-name <desired-experiment-name> \
+    --root-folder <your-desired-root-name> \
+    --train-name <desired-name-of-model> \
+    --raw-data-folder <path-to-evaluation-data>
+```
+
+#### 3. Only create an eval run under an experiment
+
+```
+prepx create \
+    --eval-only \
+    --experiment-name <desired-experiment-name> \
+    --root-folder <your-desired-root-name> \
+    --eval-name <desired-eval-name> \
+    --eval-checkpoint <path-to-eval-checkpoint> \
+    --raw-data-folder <path-to-evaluation-data>
+```
+
+Overall help:
+
 ```
 Usage: prepx create [OPTIONS]
 
@@ -41,9 +79,16 @@ Options:
   --root-folder PATH         Root experiments folder. Defaults to cwd.
   --raw-data-folder PATH     Folder with relevant raw data.
   --checkpoints-folder PATH  Folder with relevant checkpoints.
-  --train-folder PATH        Folder of train run if using --eval-only
   --eval-checkpoint FILE     Path to checkpoint if using --eval-only
-  --root-only                Only create root of experiment
+  --empty-only               Only create empty experiment folder
   --eval-only                Only create eval folder of experiment
   --help                     Show this message and exit.
+```
+
+### Analyze
+```
+Usage: prepx analyze [OPTIONS] FOLDER
+
+Options:
+  --help  Show this message and exit.
 ```
