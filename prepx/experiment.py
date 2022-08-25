@@ -197,7 +197,6 @@ class ExperimentFolder:
         eval_name: str,
         checkpoint: Path,
         raw_data_folder: Path,
-        train_folder: Optional[Path] = None,
         return_path: bool = False,
     ) -> Optional[Path]:
 

@@ -10,6 +10,7 @@ import prepx.experiment as exp
 TMP = Path("/tmp")
 STAGING = TMP / "staging"
 
+
 def create_random_checkpoint_folder() -> None:
     raise NotImplementedError
 
@@ -39,11 +40,6 @@ def cli():
     help="Folder with relevant checkpoints.",
 )
 @click.option(
-    "--train-folder",
-    type=click.Path(dir_okay=True, path_type=Path),
-    help="Folder of train run if using --eval-only",
-)
-@click.option(
     "--eval-checkpoint",
     type=click.Path(file_okay=True, dir_okay=False, exists=True, path_type=Path),
     help="Path to checkpoint if using --eval-only",
@@ -57,7 +53,6 @@ def create_experiment(
     root_folder,
     raw_data_folder,
     checkpoints_folder,
-    train_folder,
     eval_checkpoint,
     root_only,
     eval_only,
@@ -68,9 +63,6 @@ def create_experiment(
 
     if checkpoints_folder:
         checkpoints_folder = checkpoints_folder.resolve()
-
-    if train_folder:
-        train_folder = train_folder.resolve()
 
     if eval_checkpoint:
         eval_checkpoint = eval_checkpoint.resolve()
