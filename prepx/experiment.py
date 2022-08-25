@@ -64,7 +64,7 @@ class TrainFolder:
 
         if self.eval_folder is None or not self.eval_folder.exists():
             self.eval_folder = self.parent.create_eval(
-                eval_name=default_eval_name,
+                name=default_eval_name,
                 checkpoint=self.checkpoint_best_link,
                 raw_data_folder=self.raw_data_link,
                 train_folder=self.path,
@@ -166,23 +166,23 @@ class ExperimentFolder:
 
     def create_train(
         self,
-        train_name: str,
+        name: str,
         checkpoint_folder: Path,
         raw_data_folder: Path,
         return_path: bool = False,
     ) -> Optional[Path]:
 
-        if train_name in self.trains:
+        if name in self.trains:
             raise FileExistsError(
-                f"A train folder named '{train_name}' already exists!"
+                f"A train folder named '{name}' already exists!"
             )
 
-        root = self.train_root_folder / train_name
+        root = self.train_root_folder / name
 
         train_folder = TrainFolder(
             parent=self,
             path=root,
-            name=train_name,
+            name=name,
             checkpoint_folder=checkpoint_folder,
             raw_data_folder=raw_data_folder,
         )
@@ -194,16 +194,16 @@ class ExperimentFolder:
 
     def create_eval(
         self,
-        eval_name: str,
+        name: str,
         checkpoint: Path,
         raw_data_folder: Path,
         return_path: bool = False,
     ) -> Optional[Path]:
 
-        root = self.eval_root_folder / eval_name
+        root = self.eval_root_folder / name
 
         eval_folder = EvalFolder(
-            name=eval_name,
+            name=name,
             parent=self,
             path=root,
             checkpoint=checkpoint,

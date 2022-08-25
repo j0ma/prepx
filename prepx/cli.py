@@ -44,7 +44,7 @@ def cli():
     type=click.Path(file_okay=True, dir_okay=False, exists=True, path_type=Path),
     help="Path to checkpoint if using --eval-only",
 )
-@click.option("--root-only", is_flag=True, help="Only create root of experiment")
+@click.option("--empty-only", is_flag=True, help="Only create empty experiment folder")
 @click.option("--eval-only", is_flag=True, help="Only create eval folder of experiment")
 def create_experiment(
     experiment_name,
@@ -54,7 +54,7 @@ def create_experiment(
     raw_data_folder,
     checkpoints_folder,
     eval_checkpoint,
-    root_only,
+    empty_only,
     eval_only,
 ) -> None:
 
@@ -74,26 +74,14 @@ def create_experiment(
 
     root = ef.create_root(return_path=True)
 
-    if root_only:
-        print(f"Path to created experiment: {str(root)}")
-
-        return
-    elif eval_only:
-        assert (
-            train_folder is not None
-        ), "If using --eval-only, the --train-folder argument is mandatory."
-        ef.create_eval(
-            eval_name=eval_name,
-            checkpoint=eval_checkpoint,
-            raw_data_folder=raw_data_folder,
-            train_folder=train_folder,
-        )
-    else:
-        ef.create_train(
-            train_name=train_name,
-            checkpoint_folder=checkpoints_folder,
-            raw_data_folder=raw_data_folder,
-        )
+    if not empty_only:
+        create = ef.create_eval if eval_only else ef.create_train
+        args = {
+            "checkpoint": eval_checkpoint if eval_only else checkpoints_folder,
+            "name": eval_name if eval_only else train_name,
+            "raw_data_folder": raw_data_folder,
+        }
+        create(**args)
 
     print(f"Path to created experiment: {str(root)}")
 
