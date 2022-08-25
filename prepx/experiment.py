@@ -67,7 +67,6 @@ class TrainFolder:
                 name=default_eval_name,
                 checkpoint=self.checkpoint_best_link,
                 raw_data_folder=self.raw_data_link,
-                train_folder=self.path,
                 return_path=True,
             )
         print(f"Linking: {self.eval_link} -> {self.eval_folder}")
