@@ -98,7 +98,7 @@ def create_experiment(
 )
 def analyze_experiment(folder, *args, **kwargs) -> None:
 
-    args_ = ["tree", str(folder)]
+    args_ = ["nonexistent_tree_executable", str(folder)]
     pid = sp.run(args_, capture_output=True)
     pprint(pid.stdout.decode("utf-8"))
 
