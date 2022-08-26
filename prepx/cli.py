@@ -5,6 +5,7 @@ import subprocess as sp
 
 import click
 from rich import print as pprint
+from rich.tree import Tree
 import prepx.experiment as exp
 
 TMP = Path("/tmp")
@@ -90,17 +91,43 @@ def create_experiment(
     print(f"Path to created experiment: {str(root)}")
 
 
+def traverse_path(path, tree=None, current_level=0, max_level=None):
+    tree = tree or Tree(str(path))
+    should_expand = max_level is None or current_level < max_level
+
+    if should_expand:
+        for child in path.glob("*"):
+
+            # Recursively expand all directories
+
+            if child.is_symlink():
+                tree.add(f"{str(child.name)} -> {str(child.resolve())}")
+            elif child.is_dir():
+                st = tree.add(str(child.name))
+                traverse_path(
+                    child, st, current_level=current_level + 1, max_level=max_level
+                )
+            else:
+                tree.add(str(child.name))
+
+    return tree
+
+
 @cli.command("analyze")
+@click.option(
+    "--max-level",
+    help="Maximum number of levels to descend in directory hierarchy.",
+    type=int,
+)
 @click.argument(
     "folder",
     type=click.Path(dir_okay=True, path_type=Path),
     nargs=1,
 )
-def analyze_experiment(folder, *args, **kwargs) -> None:
+def analyze_experiment(max_level, folder, *args, **kwargs) -> None:
 
-    args_ = ["tree", str(folder)]
-    pid = sp.run(args_, capture_output=True)
-    pprint(pid.stdout.decode("utf-8"))
+    tree = traverse_path(folder, max_level=max_level)
+    pprint(tree)
 
 
 if __name__ == "__main__":
