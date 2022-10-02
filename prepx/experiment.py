@@ -60,7 +60,7 @@ class TrainFolder:
 
         # Evaluation
         default_eval_name = self.default_eval_template.format(self.name)
-        self.eval_link = Path(self.path / default_eval_name)
+        self.eval_link = Path(self.path / "eval")
 
         if self.eval_folder is None or not self.eval_folder.exists():
             self.eval_folder = self.parent.create_eval(
