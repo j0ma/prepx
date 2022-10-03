@@ -36,6 +36,11 @@ def cli():
     help="Folder with relevant raw data.",
 )
 @click.option(
+    "--binarized-data-folder",
+    type=click.Path(dir_okay=True, path_type=Path),
+    help="Folder with relevant binarized data.",
+)
+@click.option(
     "--checkpoints-folder",
     type=click.Path(dir_okay=True, path_type=Path),
     help="Folder with relevant checkpoints.",
@@ -53,6 +58,7 @@ def create_experiment(
     eval_name,
     root_folder,
     raw_data_folder,
+    binarized_data_folder,
     checkpoints_folder,
     eval_checkpoint,
     empty_only,
@@ -61,6 +67,8 @@ def create_experiment(
 
     root_folder = root_folder.resolve()
     raw_data_folder = raw_data_folder.resolve()
+    if binarized_data_folder:
+        binarized_data_folder = binarized_data_folder.resolve()
 
     if checkpoints_folder:
         checkpoints_folder = checkpoints_folder.resolve()
@@ -84,6 +92,7 @@ def create_experiment(
             checkpoint_key: checkpoint_value,
             "name": eval_name if eval_only else train_name,
             "raw_data_folder": raw_data_folder,
+            "binarized_data_folder": binarized_data_folder
         }
 
         create(**args)

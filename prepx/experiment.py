@@ -13,26 +13,33 @@ class TrainFolder:
     path: Path = field()
     raw_data_folder: Path = field()
     parent: "ExperimentFolder" = field(repr=False)
+    binarized_data_folder: Optional[Path] = field(default=None)
 
     # These can optionally be set. The default behavior is:
-    # 1) checkpoint folder is symlinked to it exists, else created here using default template
-    # 2) eval folder is symlinked to if it exists, else created in parent using default template
+    # 1) checkpoint folder is symlinked to it exists, else created here using
+    # default template 2) eval folder is symlinked to if it exists, else
+    # created in parent using default template
     checkpoint_folder: Optional[Path] = field(default=None)
     eval_folder: Optional[Path] = field(default=None)
 
     # Templates for raw data, checkpoint and eval folder names
     default_raw_data_template = field(default="raw_data", repr=False)
+    default_binarized_data_template = field(default="binarized_data", repr=False)
     default_checkpoint_folder_template = field(default="checkpoints", repr=False)
     default_checkpoint_template = field(default="checkpoint_best.pt", repr=False)
     default_eval_template = field(default="eval", repr=False)
 
     raw_data_link: Optional[Path] = field(default=None)
+    binarized_data_link: Optional[Path] = field(default=None)
     checkpoint_link: Optional[Path] = field(default=None)
     checkpoint_best_link: Optional[Path] = field(default=None)
     eval_link: Optional[Path] = field(default=None)
 
     def __attrs_post_init__(self):
         self.raw_data_link: Path = Path(self.path / self.default_raw_data_template)
+        self.binarized_data_link: Path = Path(
+            self.path / self.default_binarized_data_template
+        )
         self.checkpoint_link: Path = Path(
             self.path / self.default_checkpoint_folder_template
         )
@@ -48,6 +55,14 @@ class TrainFolder:
         # Raw data
         print(f"Linking: {self.raw_data_link} -> {self.raw_data_folder}")
         self.raw_data_link.symlink_to(self.raw_data_folder)
+
+        # Bin data if given
+
+        if self.binarized_data_folder:
+            print(
+                f"Linking: {self.binarized_data_link} -> {self.binarized_data_folder}"
+            )
+            self.binarized_data_link.symlink_to(self.binarized_data_folder)
 
         # Checkpoints
 
@@ -67,6 +82,7 @@ class TrainFolder:
                 name=default_eval_name,
                 checkpoint=self.checkpoint_best_link,
                 raw_data_folder=self.raw_data_link,
+                binarized_data_folder=self.binarized_data_link,
                 return_path=True,
             )
         print(f"Linking: {self.eval_link} -> {self.eval_folder}")
@@ -79,24 +95,30 @@ class EvalFolder:
     # Every eval folder needs these
     name: str = field()
     path: Path = field()
-    raw_data_folder: Path = field()
     checkpoint: Path = field()
+    raw_data_folder: Path = field()
     parent: "ExperimentFolder" = field(repr=False)
+    binarized_data_folder: Optional[Path] = field(default=None)
 
     # This can optionally be set.
     train_folder: Optional[Path] = field(default=None)
 
     # Templates for raw data, checkpoint and eval folder names
     default_raw_data_template = field(default="raw_data", repr=False)
+    default_binarized_data_template = field(default="binarized_data", repr=False)
     default_checkpoint_template = field(default="checkpoint", repr=False)
     default_train_template = field(default="train", repr=False)
 
     raw_data_link: Optional[Path] = field(default=None)
+    binarized_data_link: Optional[Path] = field(default=None)
     checkpoint_link: Optional[Path] = field(default=None)
     train_link: Optional[Path] = field(default=None)
 
     def __attrs_post_init__(self):
         self.raw_data_link: Path = Path(self.path / self.default_raw_data_template)
+        self.binarized_data_link: Path = Path(
+            self.path / self.default_binarized_data_template
+        )
         self.checkpoint_link: Path = Path(self.path / self.default_checkpoint_template)
 
     def create(self):
@@ -104,19 +126,24 @@ class EvalFolder:
         if not self.path.exists():
             self.path.mkdir(parents=True)
 
-        # Link to raw data folder
-        print(f"Linking: {self.raw_data_link} -> {self.raw_data_folder}")
-        self.raw_data_link.symlink_to(self.raw_data_folder)
-
         # Create checkpoint folder
         print(f"Linking: {self.checkpoint_link} -> {self.checkpoint}")
         self.checkpoint_link.symlink_to(self.checkpoint)
 
-        # Optionally link back to train
+        # Link to raw data folder
+        print(f"Linking: {self.raw_data_link} -> {self.raw_data_folder}")
+        self.raw_data_link.symlink_to(self.raw_data_folder)
 
-        if self.train_folder is not None:
-            self.train_link = Path(self.path / self.default_train_template)
-            self.train_link.symlink_to(self.train_folder)
+        # Link to binarized data folder if given (e.g. when working with fairseq)
+
+        if (
+            self.binarized_data_folder is not None
+            and self.binarized_data_folder.resolve().exists()
+        ):
+            print(
+                f"Linking: {self.binarized_data_link} -> {self.binarized_data_folder}"
+            )
+            self.binarized_data_link.symlink_to(self.binarized_data_folder)
 
 
 @define
@@ -168,13 +195,12 @@ class ExperimentFolder:
         name: str,
         checkpoint_folder: Path,
         raw_data_folder: Path,
+        binarized_data_folder: Optional[Path],
         return_path: bool = False,
     ) -> Optional[Path]:
 
         if name in self.trains:
-            raise FileExistsError(
-                f"A train folder named '{name}' already exists!"
-            )
+            raise FileExistsError(f"A train folder named '{name}' already exists!")
 
         root = self.train_root_folder / name
 
@@ -184,6 +210,7 @@ class ExperimentFolder:
             name=name,
             checkpoint_folder=checkpoint_folder,
             raw_data_folder=raw_data_folder,
+            binarized_data_folder=binarized_data_folder,
         )
 
         train_folder.create()
@@ -196,6 +223,7 @@ class ExperimentFolder:
         name: str,
         checkpoint: Path,
         raw_data_folder: Path,
+        binarized_data_folder: Optional[Path] = None,
         return_path: bool = False,
     ) -> Optional[Path]:
 
@@ -207,7 +235,8 @@ class ExperimentFolder:
             path=root,
             checkpoint=checkpoint,
             raw_data_folder=raw_data_folder,
-            train_folder=None
+            binarized_data_folder=binarized_data_folder,
+            train_folder=None,
         )
 
         eval_folder.create()
