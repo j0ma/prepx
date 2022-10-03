@@ -43,7 +43,7 @@ def cli():
 @click.option(
     "--checkpoints-folder",
     type=click.Path(dir_okay=True, path_type=Path),
-    help="Folder with relevant checkpoints.",
+    help="Folder with relevant checkpoints. If not given, will be created inside experiment folder",
 )
 @click.option(
     "--eval-checkpoint",
