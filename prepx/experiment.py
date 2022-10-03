@@ -14,6 +14,7 @@ class TrainFolder:
     raw_data_folder: Path = field()
     parent: "ExperimentFolder" = field(repr=False)
     binarized_data_folder: Optional[Path] = field(default=None)
+    with_tensorboard: bool = field(default=False)
 
     # These can optionally be set. The default behavior is:
     # 1) checkpoint folder is symlinked to it exists, else created here using
@@ -28,12 +29,14 @@ class TrainFolder:
     default_checkpoint_folder_template = field(default="checkpoints", repr=False)
     default_checkpoint_template = field(default="checkpoint_best.pt", repr=False)
     default_eval_template = field(default="eval_{}", repr=False)
+    default_tensorboard_folder_template = field(default="tensorboard", repr=False)
 
     raw_data_link: Optional[Path] = field(default=None)
     binarized_data_link: Optional[Path] = field(default=None)
     checkpoint_link: Optional[Path] = field(default=None)
     checkpoint_best_link: Optional[Path] = field(default=None)
     eval_link: Optional[Path] = field(default=None)
+    tensorboard_link: Optional[Path] = field(default=None)
 
     def __attrs_post_init__(self):
         self.raw_data_link: Path = Path(self.path / self.default_raw_data_template)
@@ -45,6 +48,9 @@ class TrainFolder:
         )
         self.checkpoint_best_link = (
             self.checkpoint_link / self.default_checkpoint_template
+        )
+        self.tensorboard_link: Path = Path(
+            self.path / self.default_tensorboard_folder_template
         )
 
     def create(self):
@@ -72,6 +78,10 @@ class TrainFolder:
         else:
             print(f"Creating non-existent checkpoint folder:\n{self.checkpoint_link}")
             self.checkpoint_link.mkdir(parents=True, exist_ok=True)
+
+        if self.with_tensorboard:
+            print(f"Creating non-existent tensorboard folder:\n{self.tensorboard_link}")
+            self.tensorboard_link.mkdir(parents=True, exist_ok=True)
 
         # Evaluation
         default_eval_name = self.default_eval_template.format(self.name)
@@ -161,6 +171,8 @@ class ExperimentFolder:
     # Full path placeholder
     full_path: Optional[Path] = None
 
+    with_tensorboard: bool = field(default=False)
+
     def __attrs_post_init__(self):
 
         if not self.root_folder:
@@ -197,6 +209,7 @@ class ExperimentFolder:
         raw_data_folder: Path,
         binarized_data_folder: Optional[Path],
         return_path: bool = False,
+        with_tensorboard: bool = True,
     ) -> Optional[Path]:
 
         if name in self.trains:
@@ -211,6 +224,7 @@ class ExperimentFolder:
             checkpoint_folder=checkpoint_folder,
             raw_data_folder=raw_data_folder,
             binarized_data_folder=binarized_data_folder,
+            with_tensorboard=with_tensorboard,
         )
 
         train_folder.create()
@@ -225,6 +239,7 @@ class ExperimentFolder:
         raw_data_folder: Path,
         binarized_data_folder: Optional[Path] = None,
         return_path: bool = False,
+        *args, **kwargs
     ) -> Optional[Path]:
 
         root = self.eval_root_folder / name
