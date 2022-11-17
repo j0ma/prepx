@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pathlib import Path
 
 from attr import define, field
@@ -193,7 +193,7 @@ class ExperimentFolder:
         return self.full_path / self.eval_root_folder_name
 
     @property
-    def trains(self) -> list[str]:
+    def trains(self) -> List[str]:
         return [f.name for f in self.train_root_folder.glob("*")]
 
     def create_root(self, return_path: bool = False) -> Optional[Path]:
