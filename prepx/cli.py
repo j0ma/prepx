@@ -53,6 +53,7 @@ def cli():
 @click.option("--empty-only", is_flag=True, help="Only create empty experiment folder")
 @click.option("--eval-only", is_flag=True, help="Only create eval folder of experiment")
 @click.option("--with-tensorboard", is_flag=True)
+@click.option("--with-supplemental-data", is_flag=True)
 def create_experiment(
     experiment_name,
     train_name,
@@ -65,6 +66,7 @@ def create_experiment(
     empty_only,
     eval_only,
     with_tensorboard,
+    with_supplemental_data,
 ) -> None:
 
     root_folder = root_folder.resolve()
@@ -83,6 +85,7 @@ def create_experiment(
         experiment_name=experiment_name,
         root_folder=root_folder,
         with_tensorboard=with_tensorboard,
+        with_supplemental_data=with_supplemental_data,
     )
 
     root = ef.create_root(return_path=True)
@@ -98,6 +101,7 @@ def create_experiment(
             "raw_data_folder": raw_data_folder,
             "binarized_data_folder": binarized_data_folder,
             "with_tensorboard": with_tensorboard,
+            "with_supplemental_data": with_supplemental_data,
         }
 
         create(**args)
