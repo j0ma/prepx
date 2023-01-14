@@ -226,9 +226,10 @@ class ExperimentFolder:
         return_path: bool = False,
         with_tensorboard: bool = True,
         with_supplemental_data: bool = True,
+        abort_if_exists: bool = True,
     ) -> Optional[Path]:
 
-        if name in self.trains:
+        if name in self.trains and abort_if_exists:
             raise FileExistsError(f"A train folder named '{name}' already exists!")
 
         root = self.train_root_folder / name

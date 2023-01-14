@@ -54,6 +54,7 @@ def cli():
 @click.option("--eval-only", is_flag=True, help="Only create eval folder of experiment")
 @click.option("--with-tensorboard", is_flag=True)
 @click.option("--with-supplemental-data", is_flag=True)
+@click.option("--if-train-exists", type=click.Choice(['abort', 'ignore'], default="abort"))
 def create_experiment(
     experiment_name,
     train_name,
@@ -67,7 +68,10 @@ def create_experiment(
     eval_only,
     with_tensorboard,
     with_supplemental_data,
+    if_train_exists
 ) -> None:
+
+    abort_if_exists = bool(if_train_exists == "abort")
 
     root_folder = root_folder.resolve()
     raw_data_folder = raw_data_folder.resolve()
@@ -102,6 +106,7 @@ def create_experiment(
             "binarized_data_folder": binarized_data_folder,
             "with_tensorboard": with_tensorboard,
             "with_supplemental_data": with_supplemental_data,
+            "abort_if_exists": abort_if_exists
         }
 
         create(**args)
